@@ -3,7 +3,7 @@ const Book = require('../models/book');
 
 
 
-// to get a single book
+
 router.get('/:id' , (req , res)=>{
    
     Book.find({bookId:req.body.bookId},{ _id: 0, __v: 0 },(err,data)=>{
@@ -17,7 +17,7 @@ router.get('/:id' , (req , res)=>{
 //add a new book
 //we will extract all the information from teh body of the request
 router.post('/' , async (req , res)=>{
-   // const {title, author, description,bookId} = req.body
+   
     const book =new Book({
         
         title:req.body.title,
@@ -29,31 +29,7 @@ router.post('/' , async (req , res)=>{
         
     })
 
-    Book.countDocuments({ bookId: req.body.bookId }, function (err, count) {
-        if (count > 0) {
-          Book.findOneAndUpdate(
-            { bookId: req.body.bookId },
-            {
-              $inc: {
-                author: req.body.author,
-              },
-            },
-            { new: true },
-            (err, book) => {
-              if (err) {
-                res.send(err);
-              } else res.json(book);
-            }
-          );
-        } else {
-          book.save((err, Book) => {
-            if (err) {
-              res.send(err);
-            }
-            res.json(Book);
-          });
-        }
-      });
+    
     });
     
 // router.get('/delete/:id', (req, res) => {  
@@ -92,5 +68,17 @@ router.delete('/:id', (req, res) => {
       console.log(err);
     });
 });
+router.patch('/:id',async(req,res)=>{
+  try{
+    const _id=req.params.id;
+    const update1= await Book.findByIdAndUpdate(_id, req.body, { new:true});
+  
+    res.send(update1);
+
+  }
+  catch(e){
+     //res.status(404).send(update1);
+  }
+})
 
 module.exports  = router
